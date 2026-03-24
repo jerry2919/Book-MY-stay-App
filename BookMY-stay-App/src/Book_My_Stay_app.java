@@ -10,43 +10,48 @@ class Reservation {
         this.guestName = guestName;
         this.roomType = roomType;
     }
-}
 
-class Service {
-    String serviceName;
-    double cost;
-
-    Service(String serviceName, double cost) {
-        this.serviceName = serviceName;
-        this.cost = cost;
+    void display() {
+        System.out.println("ID: " + reservationId +
+                " | Guest: " + guestName +
+                " | Room: " + roomType);
     }
 }
 
-class AddOnServiceManager {
-    private Map<String, List<Service>> serviceMap = new HashMap<>();
+class BookingHistory {
+    private List<Reservation> history = new ArrayList<>();
 
-    void addService(String reservationId, Service service) {
-        serviceMap.putIfAbsent(reservationId, new ArrayList<>());
-        serviceMap.get(reservationId).add(service);
+    void addReservation(Reservation r) {
+        history.add(r);
     }
 
-    void displayServices(String reservationId) {
-        List<Service> services = serviceMap.get(reservationId);
+    List<Reservation> getAllReservations() {
+        return history;
+    }
+}
 
-        if (services == null || services.isEmpty()) {
-            System.out.println("No services selected.");
-            return;
+class BookingReportService {
+
+    void showAllBookings(List<Reservation> history) {
+        System.out.println("Booking History:");
+
+        for (Reservation r : history) {
+            r.display();
+        }
+    }
+
+    void showSummary(List<Reservation> history) {
+        Map<String, Integer> countMap = new HashMap<>();
+
+        for (Reservation r : history) {
+            countMap.put(r.roomType,
+                    countMap.getOrDefault(r.roomType, 0) + 1);
         }
 
-        double total = 0;
-        System.out.println("Services for Reservation " + reservationId + ":");
-
-        for (Service s : services) {
-            System.out.println("- " + s.serviceName + " : $" + s.cost);
-            total += s.cost;
+        System.out.println("Booking Summary:");
+        for (String type : countMap.keySet()) {
+            System.out.println(type + " : " + countMap.get(type));
         }
-
-        System.out.println("Total Add-On Cost: $" + total);
     }
 }
 
@@ -54,7 +59,7 @@ class Main {
     public static void main(String[] args) {
 
         String appName = "Book My Stay App";
-        String version = "Hotel Booking System v7.0";
+        String version = "Hotel Booking System v8.0";
 
         System.out.println("=====================================");
         System.out.println("        " + appName);
@@ -62,15 +67,20 @@ class Main {
         System.out.println("Version: " + version);
         System.out.println("-------------------------------------");
 
-        Reservation r1 = new Reservation("R101", "Alice", "Single Room");
+        BookingHistory history = new BookingHistory();
 
-        AddOnServiceManager manager = new AddOnServiceManager();
+        history.addReservation(new Reservation("R101", "Alice", "Single Room"));
+        history.addReservation(new Reservation("R102", "Bob", "Double Room"));
+        history.addReservation(new Reservation("R103", "Charlie", "Single Room"));
+        history.addReservation(new Reservation("R104", "David", "Suite Room"));
 
-        manager.addService("R101", new Service("Breakfast", 20));
-        manager.addService("R101", new Service("Airport Pickup", 50));
-        manager.addService("R101", new Service("Extra Bed", 30));
+        BookingReportService report = new BookingReportService();
 
-        manager.displayServices("R101");
+        report.showAllBookings(history.getAllReservations());
+
+        System.out.println("-------------------------------------");
+
+        report.showSummary(history.getAllReservations());
 
         System.out.println("-------------------------------------");
         System.out.println("System execution completed.");
