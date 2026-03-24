@@ -49,24 +49,35 @@ class RoomInventory {
     int getAvailability(String roomType) {
         return inventory.getOrDefault(roomType, 0);
     }
+}
 
-    void updateAvailability(String roomType, int count) {
-        inventory.put(roomType, count);
+class RoomSearchService {
+    private RoomInventory inventory;
+
+    RoomSearchService(RoomInventory inventory) {
+        this.inventory = inventory;
     }
 
-    void displayInventory() {
-        System.out.println("Current Room Availability:");
-        for (String type : inventory.keySet()) {
-            System.out.println(type + " : " + inventory.get(type));
+    void searchRooms(Room[] rooms) {
+        System.out.println("Available Rooms:");
+
+        for (Room room : rooms) {
+            int available = inventory.getAvailability(room.type);
+
+            if (available > 0) {
+                room.displayDetails();
+                System.out.println("Available: " + available);
+                System.out.println("-------------------------------------");
+            }
         }
     }
 }
 
-class Main {   // ✅ no "public" → no file name restriction
+class Main {
     public static void main(String[] args) {
 
         String appName = "Book My Stay App";
-        String version = "Hotel Booking System v3.1";
+        String version = "Hotel Booking System v4.0";
 
         System.out.println("=====================================");
         System.out.println("        " + appName);
@@ -74,30 +85,18 @@ class Main {   // ✅ no "public" → no file name restriction
         System.out.println("Version: " + version);
         System.out.println("-------------------------------------");
 
-        Room single = new SingleRoom();
-        Room doubleRoom = new DoubleRoom();
-        Room suite = new SuiteRoom();
-
-        single.displayDetails();
-        System.out.println("-------------------------------------");
-
-        doubleRoom.displayDetails();
-        System.out.println("-------------------------------------");
-
-        suite.displayDetails();
-        System.out.println("-------------------------------------");
+        Room[] rooms = {
+                new SingleRoom(),
+                new DoubleRoom(),
+                new SuiteRoom()
+        };
 
         RoomInventory inventory = new RoomInventory();
 
-        inventory.displayInventory();
+        RoomSearchService searchService = new RoomSearchService(inventory);
 
-        System.out.println("-------------------------------------");
+        searchService.searchRooms(rooms);
 
-        inventory.updateAvailability("Single Room", 4);
-
-        inventory.displayInventory();
-
-        System.out.println("-------------------------------------");
         System.out.println("System execution completed.");
     }
 }
