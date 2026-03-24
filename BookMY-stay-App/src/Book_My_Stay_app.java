@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 abstract class Room {
     String type;
     int beds;
@@ -34,18 +36,37 @@ class SuiteRoom extends Room {
     }
 }
 
-class Main {   // ✅ Changed class name and removed "public"
+class RoomInventory {
+    private HashMap<String, Integer> inventory;
+
+    RoomInventory() {
+        inventory = new HashMap<>();
+        inventory.put("Single Room", 5);
+        inventory.put("Double Room", 3);
+        inventory.put("Suite Room", 2);
+    }
+
+    int getAvailability(String roomType) {
+        return inventory.getOrDefault(roomType, 0);
+    }
+
+    void updateAvailability(String roomType, int count) {
+        inventory.put(roomType, count);
+    }
+
+    void displayInventory() {
+        System.out.println("Current Room Availability:");
+        for (String type : inventory.keySet()) {
+            System.out.println(type + " : " + inventory.get(type));
+        }
+    }
+}
+
+class Main {   // ✅ no "public" → no file name restriction
     public static void main(String[] args) {
+
         String appName = "Book My Stay App";
-        String version = "Hotel Booking System v2.1";
-
-        Room single = new SingleRoom();
-        Room doubleRoom = new DoubleRoom();
-        Room suite = new SuiteRoom();
-
-        int singleAvailability = 5;
-        int doubleAvailability = 3;
-        int suiteAvailability = 2;
+        String version = "Hotel Booking System v3.1";
 
         System.out.println("=====================================");
         System.out.println("        " + appName);
@@ -53,18 +74,30 @@ class Main {   // ✅ Changed class name and removed "public"
         System.out.println("Version: " + version);
         System.out.println("-------------------------------------");
 
+        Room single = new SingleRoom();
+        Room doubleRoom = new DoubleRoom();
+        Room suite = new SuiteRoom();
+
         single.displayDetails();
-        System.out.println("Available: " + singleAvailability);
         System.out.println("-------------------------------------");
 
         doubleRoom.displayDetails();
-        System.out.println("Available: " + doubleAvailability);
         System.out.println("-------------------------------------");
 
         suite.displayDetails();
-        System.out.println("Available: " + suiteAvailability);
         System.out.println("-------------------------------------");
 
+        RoomInventory inventory = new RoomInventory();
+
+        inventory.displayInventory();
+
+        System.out.println("-------------------------------------");
+
+        inventory.updateAvailability("Single Room", 4);
+
+        inventory.displayInventory();
+
+        System.out.println("-------------------------------------");
         System.out.println("System execution completed.");
     }
 }
