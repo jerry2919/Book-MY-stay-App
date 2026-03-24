@@ -62,7 +62,7 @@ class RoomInventory {
     }
 }
 
-class Main {   // ✅ no "public" → no file name restriction
+class Main {  
     public static void main(String[] args) {
 
         String appName = "Book My Stay App";
