@@ -1,4 +1,4 @@
-import java.util.HashMap;
+import java.util.*;
 
 abstract class Room {
     String type;
@@ -36,39 +36,36 @@ class SuiteRoom extends Room {
     }
 }
 
-class RoomInventory {
-    private HashMap<String, Integer> inventory;
+class Reservation {
+    String guestName;
+    String roomType;
 
-    RoomInventory() {
-        inventory = new HashMap<>();
-        inventory.put("Single Room", 5);
-        inventory.put("Double Room", 3);
-        inventory.put("Suite Room", 2);
+    Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
+        this.roomType = roomType;
     }
 
-    int getAvailability(String roomType) {
-        return inventory.getOrDefault(roomType, 0);
+    void displayReservation() {
+        System.out.println("Guest: " + guestName + " | Room: " + roomType);
     }
 }
 
-class RoomSearchService {
-    private RoomInventory inventory;
+class BookingRequestQueue {
+    private Queue<Reservation> queue;
 
-    RoomSearchService(RoomInventory inventory) {
-        this.inventory = inventory;
+    BookingRequestQueue() {
+        queue = new LinkedList<>();
     }
 
-    void searchRooms(Room[] rooms) {
-        System.out.println("Available Rooms:");
+    void addRequest(Reservation reservation) {
+        queue.offer(reservation);
+    }
 
-        for (Room room : rooms) {
-            int available = inventory.getAvailability(room.type);
+    void displayQueue() {
+        System.out.println("Booking Requests in Queue:");
 
-            if (available > 0) {
-                room.displayDetails();
-                System.out.println("Available: " + available);
-                System.out.println("-------------------------------------");
-            }
+        for (Reservation r : queue) {
+            r.displayReservation();
         }
     }
 }
@@ -77,7 +74,7 @@ class Main {
     public static void main(String[] args) {
 
         String appName = "Book My Stay App";
-        String version = "Hotel Booking System v4.0";
+        String version = "Hotel Booking System v5.0";
 
         System.out.println("=====================================");
         System.out.println("        " + appName);
@@ -85,18 +82,15 @@ class Main {
         System.out.println("Version: " + version);
         System.out.println("-------------------------------------");
 
-        Room[] rooms = {
-                new SingleRoom(),
-                new DoubleRoom(),
-                new SuiteRoom()
-        };
+        BookingRequestQueue requestQueue = new BookingRequestQueue();
 
-        RoomInventory inventory = new RoomInventory();
+        requestQueue.addRequest(new Reservation("Alice", "Single Room"));
+        requestQueue.addRequest(new Reservation("Bob", "Double Room"));
+        requestQueue.addRequest(new Reservation("Charlie", "Suite Room"));
 
-        RoomSearchService searchService = new RoomSearchService(inventory);
+        requestQueue.displayQueue();
 
-        searchService.searchRooms(rooms);
-
+        System.out.println("-------------------------------------");
         System.out.println("System execution completed.");
     }
 }
